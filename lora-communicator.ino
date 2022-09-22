@@ -228,9 +228,8 @@ void program_handle_keypress(char pressed) {
         // null terminate string
         command += "\0";
         char cmd_buf[200];
-        int length = command.length();
+        int length = command.length()+1;
         command.toCharArray(cmd_buf, length);
-        //cmd_buf[command.length()+1] = 0;
         rf95.send((uint8_t *)cmd_buf, length+1);
         if(rf95.waitPacketSent()){
           screen_print_ln(command);
