@@ -225,10 +225,13 @@ void program_handle_keypress(char pressed) {
         command = command.substring(0, command.length() -1);
       }
       else if(pressed == 10){
-        char cmd_buf[50];
-        command.toCharArray(cmd_buf, command.length());
-        cmd_buf[command.length()+1] = 0;
-        rf95.send((uint8_t *)cmd_buf, command.length()+2);
+        // null terminate string
+        command += "\0";
+        char cmd_buf[200];
+        int length = command.length();
+        command.toCharArray(cmd_buf, length);
+        //cmd_buf[command.length()+1] = 0;
+        rf95.send((uint8_t *)cmd_buf, length+1);
         if(rf95.waitPacketSent()){
           screen_print_ln(command);
         }
@@ -360,7 +363,7 @@ void loop() {
       #endif
     }
     else{
-      screen_print_ln("ERR");
+      screen_print_ln("RX ERR");
     }
   }
   else {
