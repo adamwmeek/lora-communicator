@@ -154,7 +154,7 @@ void show_status(){
     case 1: 
       // --- Display startup message ---//
       switch(startup_status){
-        case 0: screen_print_ln("LoRa Terminal Ready"); break;
+        case 0: screen_print_ln("LoRa Communicator Ready: " + String(RF95_FREQ)); break;
         case 1: screen_print_ln("Failed to init radio"); while(1); break;
         case 2: screen_print_ln("Invalid frequency"); while(1); break;
         default: screen_print_ln("Unknown Error"); while(1); break;
