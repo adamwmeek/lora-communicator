@@ -62,6 +62,7 @@ Adafruit_NeoPixel pixel(1, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 BBQ10Keyboard keyboard;
 volatile bool dataReady = false;
+volatile int keysToRead = 0;
 const int interruptPin = 6;
 
 // -- The currently running "program", aka the mode to display and act on -- //
@@ -131,6 +132,7 @@ void cmd_print_ln(char * string){
 
 void KeyIsr(void){
   dataReady = true;
+  keysToRead = keyboard.keyCount();
 }
 
 float measure_batt_voltage(){
@@ -263,40 +265,44 @@ void loop() {
 
   // --- Check for new key presses --- //
   if (dataReady){
-    
-    const BBQ10Keyboard::KeyEvent key = keyboard.keyEvent();
 
-    if (key.state == BBQ10Keyboard::StatePress) {
+    for(int i = 0; i < keysToRead + 1; i++){
+      
+      const BBQ10Keyboard::KeyEvent key = keyboard.keyEvent();
+  
+      if (key.state == BBQ10Keyboard::StatePress) {
 
-      char pressed = key.key;
+        char pressed = key.key;
 
-      if (pressed == 6){
-        if(current_program != 1){
-          current_program = 1;
-          switch_programs = true;
+        if (pressed == 6){
+          if(current_program != 1){
+            current_program = 1;
+            switch_programs = true;
+          }
+        }
+        else if (pressed == 17){
+          if(current_program != 2){
+            current_program = 2;
+            switch_programs = true;
+          }
+        }
+        else if (pressed == 7){
+          if(current_program != 3){
+            current_program = 3;
+            switch_programs = true;
+          }
+        }
+        else if (pressed == 18){
+          if(current_program != 4){
+            current_program = 4;
+            switch_programs = true;
+          }
+        }
+        else {
+          program_handle_keypress(pressed);
         }
       }
-      else if (pressed == 17){
-        if(current_program != 2){
-          current_program = 2;
-          switch_programs = true;
-        }
-      }
-      else if (pressed == 7){
-        if(current_program != 3){
-          current_program = 3;
-          switch_programs = true;
-        }
-      }
-      else if (pressed == 18){
-        if(current_program != 4){
-          current_program = 4;
-          switch_programs = true;
-        }
-      }
-      else {
-        program_handle_keypress(pressed);
-      }
+      
     }
 
     keyboard.clearInterruptStatus();
